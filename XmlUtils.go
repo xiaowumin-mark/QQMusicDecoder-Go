@@ -125,7 +125,6 @@ func RecursionFindElement(elem *etree.Element,
 
 	// 检查当前元素是否在映射表中
 	if targetKey, exists := mappingDict[elem.Tag]; exists {
-		fmt.Println("找到目标元素：", targetKey)
 		resDict[targetKey] = elem
 	}
 	/*
