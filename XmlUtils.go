@@ -43,19 +43,16 @@ public static XmlDocument Create(string content)
 */
 func CreateXmlDom(content string) *etree.Document {
 	content = RemoveIllegalContent(content)
-
+	//
 	content = ReplaceAmp(content)
-
-	//content = ReplaceQuot(content)
+	content = ReplaceQuot(content)
 	doc := etree.NewDocument()
-
 	if err := doc.ReadFromString(content); err != nil {
 		fmt.Println("Error loading XML:", err)
 	}
 
 	return doc
 }
-
 func RemoveIllegalContent(content string) string {
 	left := 0
 	i := 0
@@ -64,17 +61,17 @@ func RemoveIllegalContent(content string) string {
 			left = i
 		}
 
-		// 闭区间
+		// 闭区间处理
 		if i > 0 && content[i] == '>' && content[i-1] == '/' {
 			part := content[left : i+1]
 
-			// 存在有且只有一个等号
+			// 检查是否存在等号且只有一个
 			eqIdx := strings.Index(part, "=")
 			if eqIdx != -1 && eqIdx == strings.LastIndex(part, "=") {
-				eqPos := left + eqIdx
-				part1 := content[left:eqPos]
-
+				// 提取等号前的部分
+				part1 := content[left : left+eqIdx]
 				if !strings.Contains(strings.TrimSpace(part1), " ") {
+					// 删除非法部分并重置索引
 					content = content[:left] + content[i+1:]
 					i = 0
 					continue
@@ -85,7 +82,6 @@ func RemoveIllegalContent(content string) string {
 	}
 	return strings.TrimSpace(content)
 }
-
 func ReplaceAmp(content string) string {
 	// 使用 regexp2 的替换方法
 	result, _ := AmpRegex.Replace(content, "&amp;", -1, -1)
